@@ -1,33 +1,70 @@
-//-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//------------------------------------------------------------------------------
+/**
+ * SUPER ULTRA RPG GAME
+ * by patxoca
+ * July 2019
+ **/
 
 #include <cpctelera.h>
+#include <stdio.h>
+
 
 void main(void) {
-   u8* pvmem;  // Pointer to video memory
+    // Init variables
+    u8 energy    = 100;
+    u8 attack    = 30;
+    u8 defense   = 15;
+    u8 energyen  = 90;
+    u8 attacken  = 20;
+    u8 defenseen = 10;
 
-   // Clear Screen
-   cpct_memset(CPCT_VMEM_START, 0, 0x4000);
+    cpct_keyID key_pressed = 0;
 
-   // Draw String on the middle of the screen
-   pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 96);
-   cpct_drawStringM1("Welcome to CPCtelera!", pvmem, 1, 0);
+    // Let's start!
+    printf("RPG GAME\r\n");
+    printf("\r\n");
+    printf("PRESS ENTER TO START\r\n");
 
-   // Loop forever
-   while (1);
+    // Is enter pressed?
+    while (!cpct_isKeyPressed(Key_Enter)) {
+        cpct_scanKeyboard();
+    }
+
+    while (1) {
+
+        // CLS
+        putchar(12);
+
+        // Print stats
+        printf("PLAYER [%d] (a%d) (d%d)\r\n", energy,   attack,   defense);
+        printf("ENEMY  [%d] (a%d) (d%d)\r\n", energyen, attacken, defenseen);
+
+        key_pressed = 0;
+        do {
+            cpct_scanKeyboard();
+            if (cpct_isKeyPressed(Key_A)) {
+                key_pressed = Key_A;
+            } else if (cpct_isKeyPressed(Key_D)) {
+                key_pressed = Key_D;
+            }
+        } while (key_pressed == 0);
+
+        switch (key_pressed) {
+        case Key_A:
+            // PLAYER ATTACKS!
+            energyen -= attack;
+            break;
+
+        case Key_D:
+            energy += defense;
+            break;
+        }
+
+        // ENEMY DECIDE
+        if (cpct_rand() < 64) {
+            energyen += defenseen;
+        } else {
+            energy -= attacken;
+        }
+    }
+
 }
